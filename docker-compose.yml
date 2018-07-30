@@ -1,0 +1,48 @@
+version: '3'
+#SALVANDO OS DADOS FORA DO CONTAINER(HOST) EM /var/lib/docker
+volumes:
+    dados:
+services:
+  server:
+    build: containers/server/.
+    container_name: server-projeto
+    ports:
+      - "8000:80"
+      - "443:443"
+    volumes:
+      - ./application/:/var/www/html/    
+    links:
+    - db
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD: 12345   
+  db:
+    build: containers/banco/.  
+    container_name: mysql-projeto
+    ports:
+    - "8036:3306"
+    volumes:
+    # VOLUME DE DADOS
+    - dados:/var/lib/mysql
+    # SCRIPTS
+      #CRIANDO A PASTA DENTRO DO CONTAINER
+    - ./containers/banco/scripts:/scripts
+      #CRIANDO O SCRIPT SQL DE INICIACAO
+    - ./containers/banco/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345
+      - MYSQL_DATABASE=loja
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-projeto  
+    links: 
+      - db:db
+    ports:
+      - 8080:80
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD: 12345

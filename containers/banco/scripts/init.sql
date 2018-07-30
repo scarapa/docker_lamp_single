@@ -1,0 +1,8 @@
+CREATE DATABASE loja;
+USE loja;
+CREATE TABLE loja.cliente ( 
+    id INT(3) NOT NULL AUTO_INCREMENT ,  
+    ds_nome VARCHAR(25) NOT NULL ,  
+    dt_create DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ,    
+    PRIMARY KEY  (id)
+) ENGINE = InnoDB;
